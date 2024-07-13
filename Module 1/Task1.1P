@@ -30,10 +30,13 @@ void loop()
   Serial.println(" cm");
 
   // Control LED based on distance
-  if (distance < 20) { // Turn on LED if object is within 10 cm
+  if (distance < 40) { // Turn on LED if object is within 10 cm
     digitalWrite(ledPin, HIGH);
+    Serial.print("LED is on          ");
   } else {
     digitalWrite(ledPin, LOW);
+    Serial.print("LED is off          ");
+
   }
 
   delay(1000); // Wait for 1000 millisecond(s)
