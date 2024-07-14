@@ -1,0 +1,44 @@
+const int BUTTON = 2; //pin 2 supports interruptts , not all pins do
+const int LED = 8;
+volatile int BUTTONstate = LOW;  // Uses volatile for variables accessed within an interrupt
+volatile bool buttonPressed = false;
+unsigned long lastDebounceTime = 0;  // Debounce timer
+const unsigned long debounceDelay = 50;  
+
+void setup() {
+  pinMode(BUTTON, INPUT_PULLUP);  
+  pinMode(LED, OUTPUT);
+
+  // Attach interrupt to the button pin
+  attachInterrupt(digitalPinToInterrupt(BUTTON), buttonInterrupt, CHANGE);
+
+  // Initialize serial communication
+  Serial.begin(9600);
+}
+
+void loop() {
+  if (buttonPressed) {
+    // Toggle LED state based on BUTTONstate
+    digitalWrite(LED, BUTTONstate);
+
+    // Handle debug prints here
+    //takes the outcome from the buttonInterrupt function to decide which message to print
+    if (BUTTONstate == HIGH) {
+      Serial.println("Button pressed, LED is ON");
+    } else {
+      Serial.println("Button released, LED is OFF");
+    }
+
+    buttonPressed = false;  // Reset the flag
+  }
+
+}
+
+void buttonInterrupt() {
+  unsigned long currentTime = millis();
+  if (currentTime - lastDebounceTime > debounceDelay) {
+    BUTTONstate = digitalRead(BUTTON);
+    buttonPressed = true;
+    lastDebounceTime = currentTime;
+  }
+}
